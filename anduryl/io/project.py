@@ -4,7 +4,7 @@ from typing import Union
 
 import numpy as np
 from anduryl.io import reader, writer
-from anduryl.io.savemodels import SaveModel
+from anduryl.io.savemodels import SaveModel, Expert
 
 
 class ProjectIO:
@@ -107,9 +107,9 @@ class ProjectIO:
             "items": item_dict,
             "assessments": assessment_dict,
             # "results": {key: project.results[key].settings for key in project.results.keys()},
-        }
+        }   
 
-        return SaveModel.parse_obj(project_dct)
+        return SaveModel.model_validate(project_dct)
 
     def to_json(self, path: Union[str, Path]) -> None:
         """
@@ -131,7 +131,7 @@ class ProjectIO:
 
         # Save
         with path.open("w") as f:
-            text = savemodel.json(indent=4)
+            text = savemodel.model_dump_json(indent=4)
             # Remove line breaks inside lists (last level of json-file) to make the json easier to read
             for match in re.findall("\[[\s\S]*?\]", text):
                 text = text.replace(match, "[" + " ".join(match[1:-1].split()) + "]")
